@@ -1,13 +1,9 @@
 package com.example.springsecuritydemo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,9 +11,9 @@ import java.util.Set;
 @Entity
 @Table(name = "users",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = "usersname"),
-        @UniqueConstraint(columnNames = "email")
-    })
+        @UniqueConstraint(columnNames = "username")
+})
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -42,4 +38,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    public User(String username, String encode) {
+        this.username = username;
+        this.password = encode;
+    }
 }
