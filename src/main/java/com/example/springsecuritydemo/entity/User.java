@@ -15,8 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = "usersname"),
-        @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "username")
     })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,6 +34,8 @@ public class User {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    private Boolean isEnable;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
