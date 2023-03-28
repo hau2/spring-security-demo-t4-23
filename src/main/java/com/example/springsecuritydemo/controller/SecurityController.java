@@ -19,6 +19,7 @@ public class SecurityController {
     @GetMapping("/login")
     public String authenticateUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("authentication = " + authentication);
         if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return "login";
         }
@@ -37,5 +38,10 @@ public class SecurityController {
        }
 
        return InetAddress.getLocalHost().getHostAddress();
+    }
+
+    @GetMapping("blocked")
+    public String getBlockedPage() {
+        return "blocked";
     }
 }

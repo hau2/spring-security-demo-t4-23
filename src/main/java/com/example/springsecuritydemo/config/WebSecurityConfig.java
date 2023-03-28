@@ -2,6 +2,7 @@ package com.example.springsecuritydemo.config;
 
 //import com.example.springsecuritydemo.jwt.AuthTokenFilter;
 import com.example.springsecuritydemo.service.UserDetailsServiceImpl;
+import com.example.springsecuritydemo.utils.CustomAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -52,16 +54,28 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+//    https://www.baeldung.com/spring-security-exceptions
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
+                .requestMatchers("/login")
+                .permitAll()
+                .requestMatchers("/blocked")
+                .permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .usernameParameter("username")
-                .loginPage("/login")
-                .permitAll();
+                .and().formLogin()
+                .failureHandler(authenticationFailureHandler());
+//                .and()
+//                .formLogin()
+//                .usernameParameter("username")
+//                .loginPage("/login")
+//                .permitAll()
+//                .failureHandler(authenticationFailureHandler());
 
         return http.build();
     }
