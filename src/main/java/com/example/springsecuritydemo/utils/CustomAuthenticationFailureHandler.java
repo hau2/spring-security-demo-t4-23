@@ -29,11 +29,11 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             userService.updateIsEnableByUsername(false, username);
             userService.updateCountFailLoginByUsername(0, username);
 //            request.getSession().setAttribute("isEnable", false);
-//            response.sendRedirect("blocked");
+            response.sendRedirect("blocked");
 
         } else {
             userService.updateCountFailLoginByUsername(countFailLogin+1, username);
-//            response.sendRedirect("login");
+            response.sendRedirect("login");
         }
 
 
