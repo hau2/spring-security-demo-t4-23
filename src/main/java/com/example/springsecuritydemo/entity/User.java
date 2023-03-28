@@ -13,34 +13,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username")
-    })
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Integer id;
 
-    @NotBlank
-    @Size(max = 20)
+    @Column(name = "username",nullable = false)
     private String username;
 
-    @NotBlank
-    @Size(max = 120)
+    @Column(length = 128, nullable = false)
     private String password;
 
-    private Boolean isEnable;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
-
+    private boolean isEnable;
+    private String ipAddress;
+    private Integer countFailLogin;
+    private String lastTimeLogin;
 }

@@ -1,33 +1,32 @@
 package com.example.springsecuritydemo.controller;
 
-import com.example.springsecuritydemo.payload.request.LoginRequest;
-import com.example.springsecuritydemo.payload.response.CustomResponse;
-import com.example.springsecuritydemo.payload.response.JwtResponse;
-import com.example.springsecuritydemo.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@RestController
-@RequestMapping("/api/auth")
+@Controller
+@RequestMapping("")
 public class SecurityController {
-    @Autowired
-    AuthService authService;
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        JwtResponse jwtResponse = authService.signIn(loginRequest);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new CustomResponse<>(200, jwtResponse));
+
+    @GetMapping("/")
+    public String viewHomePage() {
+        return "index";
+    }
+    @GetMapping("/login")
+    public String authenticateUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return "login";
+        }
+        return "redirect:/";
     }
 
     @GetMapping("/get-ip")
-    public String getIp() {
+    public String getIp() throws UnknownHostException {
         try {
             InetAddress myIp = InetAddress.getLocalHost();
            System.out.println(myIp);
@@ -37,6 +36,6 @@ public class SecurityController {
            throw new RuntimeException(e);
        }
 
-       return "";
+       return InetAddress.getLocalHost().getHostAddress();
     }
 }

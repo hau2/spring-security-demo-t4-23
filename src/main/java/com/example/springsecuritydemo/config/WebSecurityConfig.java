@@ -1,7 +1,6 @@
 package com.example.springsecuritydemo.config;
 
-import com.example.springsecuritydemo.jwt.AuthEntryPointJwt;
-import com.example.springsecuritydemo.jwt.AuthTokenFilter;
+//import com.example.springsecuritydemo.jwt.AuthTokenFilter;
 import com.example.springsecuritydemo.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +24,13 @@ public class WebSecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+//    @Autowired
+//    private AuthEntryPointJwt unauthorizedHandler;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+//    @Bean
+//    public AuthTokenFilter authenticationJwtTokenFilter() {
+//        return new AuthTokenFilter();
+//    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -56,18 +55,13 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
-
-        http.authenticationProvider(authenticationProvider());
-
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeHttpRequests()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .usernameParameter("username")
+                .loginPage("/login")
+                .permitAll();
 
         return http.build();
     }
