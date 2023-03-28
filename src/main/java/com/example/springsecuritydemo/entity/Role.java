@@ -1,6 +1,5 @@
 package com.example.springsecuritydemo.entity;
 
-import com.example.springsecuritydemo.model.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
