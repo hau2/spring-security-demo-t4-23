@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.service.impl;
 
+import com.example.springsecuritydemo.entity.User;
 import com.example.springsecuritydemo.repository.UserRepository;
 import com.example.springsecuritydemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 
     @Override
     public void updateIsEnableByUsername(Boolean isEnable, String username) {

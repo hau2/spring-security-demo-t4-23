@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.utils;
 
+import com.example.springsecuritydemo.constants.Constants;
 import com.example.springsecuritydemo.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +26,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         System.out.println("username = " + username);
         System.out.println("countFailLogin = " + countFailLogin);
 
-        if (countFailLogin == 3 || countFailLogin > 3) {
+        if (!userService.findByUsername(username).isEnable() ||countFailLogin >= Constants.COUNT_LOCK_USER) {
             userService.updateIsEnableByUsername(false, username);
             userService.updateCountFailLoginByUsername(0, username);
-//            request.getSession().setAttribute("isEnable", false);
             response.sendRedirect("blocked");
 
         } else {
