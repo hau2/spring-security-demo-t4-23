@@ -1,45 +1,34 @@
 package com.example.springsecuritydemo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "usersname"),
-        @UniqueConstraint(columnNames = "email")
-    })
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Integer id;
 
-    @NotBlank
-    @Size(max = 20)
+    @Column(name = "username",nullable = false)
     private String username;
-
-    @NotBlank
-    @Size(max = 120)
+    private String mail;
+    @Column(length = 128, nullable = false)
     private String password;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
-
+    private boolean  isEnable;
+    private Integer countFailLogin;
+    private String lastTimeLogin;
+    private String privateCode;
+    @Column(columnDefinition = "DATETIME(6)")
+    private LocalDateTime expiryDateCode;
 }

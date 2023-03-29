@@ -11,12 +11,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Role {
+public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
     private Integer id;
 
-    @Column(name = "role_name")
-    private String roleName;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

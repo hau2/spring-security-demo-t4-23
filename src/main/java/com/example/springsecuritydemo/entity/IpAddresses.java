@@ -11,12 +11,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Role {
+public class IpAddresses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
+    @Column(name = "ip_id")
     private Integer id;
 
-    @Column(name = "role_name")
-    private String roleName;
+    @Column(name = "ip_address")
+    private String ipAddress;
+
+    Boolean isBlock;
 }
