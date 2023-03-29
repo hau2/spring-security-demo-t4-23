@@ -17,33 +17,27 @@ public class SecurityController {
     public String viewHomePage() {
         return "index";
     }
+
     @GetMapping("/login")
     public String authenticateUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("authentication = " + authentication);
         if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return "login";
         }
         return "redirect:/";
     }
 
-    @GetMapping("/get-ip")
-    public String getIp() throws UnknownHostException {
-        try {
-            InetAddress myIp = InetAddress.getLocalHost();
-           System.out.println(myIp);
-           System.out.println(myIp.getHostAddress());
-           System.out.println(myIp.getHostName());
-       } catch (UnknownHostException e) {
-           throw new RuntimeException(e);
-       }
-
-       return InetAddress.getLocalHost().getHostAddress();
-    }
-
-    @GetMapping("blocked")
-    public String getBlockedPage(Model model) {
+    @GetMapping("/user_blocked")
+    public String getUserBlockedPage(Model model) {
         model.addAttribute("username", "Username");
-        return "blocked";
+        return "userBlocked";
     }
+
+    @GetMapping("/ip_blocked")
+    public String getIPBlockedPage(Model model) {
+        model.addAttribute("username", "Username");
+        return "ipBlocked";
+    }
+
+
 }
