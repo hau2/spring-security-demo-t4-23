@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.entity;
 
+import com.example.springsecuritydemo.model.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,6 @@ public class Role {
     @Column(name = "role_id")
     private Integer id;
 
-    @Column(name = "role_name")
-    private String roleName;
+    @Column(name = "role_name", columnDefinition = "VARCHAR(50)")
+    private ERole roleName;
 }

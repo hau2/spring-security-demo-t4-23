@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,13 +18,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer id;
-
-    @Column(name = "username",nullable = false)
-    private String username;
+    @Column(name = "mail", nullable = false)
     private String mail;
     @Column(length = 128, nullable = false)
     private String password;
-    private boolean  isEnable;
+    private boolean isEnable;
     private Integer countFailLogin;
     private String lastTimeLogin;
     private String privateCode;
