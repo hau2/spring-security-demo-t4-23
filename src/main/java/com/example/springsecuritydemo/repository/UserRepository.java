@@ -5,16 +5,43 @@ import com.example.springsecuritydemo.query.PrivateCodeResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByMail(String mail);
+
+    @Transactional
+    @Modifying
+    @Query(
+            value = "UPDATE user SET is_enable = :isEnable WHERE mail = :mail",
+            nativeQuery = true
+    )
+    void updateIsEnableByUsername(
+            @Param("isEnable") Boolean isEnable,
+            @Param("mail") String mail);
+
+    @Transactional
+    @Modifying
+    @Query(
+            value = "UPDATE user SET count_fail_login = :countFailLogin WHERE mail = :mail",
+            nativeQuery = true
+    )
+    void updateCountFailLoginByUsername(
+            @Param("countFailLogin") int countFailLogin,
+            @Param("mail") String mail);
+
+    @Transactional
+    @Query(
+            value = "SELECT count_fail_login FROM user  WHERE mail = :mail",
+            nativeQuery = true
+    )
+    Integer getCountFailLoginByUsername(@Param("mail") String mail);
 
     @Query(value = "select * from user where private_code = ?;", nativeQuery = true)
     Optional<User> finByPrivateCode(String privateCode);

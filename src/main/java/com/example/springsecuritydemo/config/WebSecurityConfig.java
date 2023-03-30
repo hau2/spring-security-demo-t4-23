@@ -1,7 +1,7 @@
 package com.example.springsecuritydemo.config;
 
-import com.example.springsecuritydemo.handler.CustomAuthenticationFailureHandler;
-import com.example.springsecuritydemo.handler.CustomAuthenticationSuccessHandler;
+import com.example.springsecuritydemo.security.CustomAuthenticationFailureHandler;
+import com.example.springsecuritydemo.security.CustomAuthenticationSuccessHandler;
 import com.example.springsecuritydemo.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -60,15 +60,17 @@ public class WebSecurityConfig {
                 .requestMatchers("/request-reset-password/**").permitAll()
                 .requestMatchers("/reset-password").permitAll()
                 .requestMatchers("/reset").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/user_blocked").permitAll()
+                .requestMatchers("/ip_blocked").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .usernameParameter("username")
-                .loginPage("/login")
+//                .usernameParameter("username")
+//                .loginPage("/login")
                 .failureHandler(authenticationFailureHandler())
-                .successHandler(authenticationSuccessHandler())
-                .permitAll();
-
+                .successHandler(authenticationSuccessHandler());
+//                .permitAll();
         return http.build();
     }
 }

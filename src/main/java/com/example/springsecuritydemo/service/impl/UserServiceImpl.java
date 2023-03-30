@@ -29,6 +29,21 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder encoder;
 
     @Override
+    public void updateIsEnableByUsername(Boolean isEnable, String username) {
+        userRepository.updateIsEnableByUsername(isEnable, username);
+    }
+
+    @Override
+    public void updateCountFailLoginByUsername(int countFailLogin, String username) {
+        userRepository.updateCountFailLoginByUsername(countFailLogin, username);
+    }
+
+    @Override
+    public Integer getCountFailLoginByUsername(String username) {
+        return userRepository.getCountFailLoginByUsername(username);
+    }
+
+    @Override
     public void sendMailResetPassword(String mail) {
         // Check private code in the database if private code has existed -> not generate a new private code
         PrivateCodeResult privateCodeResult = userRepository.findPrivateCodeByMail(mail);

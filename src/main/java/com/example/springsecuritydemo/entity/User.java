@@ -23,8 +23,6 @@ public class User {
     @Column(length = 128, nullable = false)
     private String password;
     private boolean isEnable;
-    private Integer countFailLogin;
-    private String lastTimeLogin;
     private String privateCode;
     @Column(columnDefinition = "DATETIME(6)")
     private LocalDateTime expiryDateCode;
