@@ -19,10 +19,6 @@ public class AuthenticationFailureListener implements
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
-        System.out.println("onApplicationEvent fail event = " + event.toString());
-        System.out.println(event.getAuthentication().getAuthorities().size());
-        System.out.println(event.getAuthentication().getAuthorities().equals(ERole.ROLE_ANONYMOUS.toString()));
-        System.out.println("-------------");
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
             loginAttemptService.loginFailedIPAddress(request.getRemoteAddr());

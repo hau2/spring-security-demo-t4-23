@@ -37,7 +37,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     RoleRepository roleRepository;
 
     private List<GrantedAuthority> getAuthorities(List<String> roles) {
-        System.out.println("roles = " + roles);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         if (roles != null) {
             for (String roleName : roles) {
@@ -45,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 grantedAuthorities.add(authority);
             }
         }
-        System.out.println("grantedAuthorities = " + grantedAuthorities);
+
         return grantedAuthorities;
     }
 
@@ -55,12 +54,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (loginAttemptService.isIPAddressBlocked()) {
             throw new RuntimeException("blocked");
         }
-        System.out.println("check username");
+
         try {
             User user = userRepository.findByUsername(username);
 
             if (user == null) {
-                System.out.println("user null");
                 return new org.springframework.security.core.userdetails.User(
                         " ", " ", true, true, true, true,
                         getAuthorities(Collections.singletonList((ERole.ROLE_ANONYMOUS.toString()))));

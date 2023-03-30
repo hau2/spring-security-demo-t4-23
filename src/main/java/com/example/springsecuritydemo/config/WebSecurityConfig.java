@@ -69,18 +69,11 @@ public class WebSecurityConfig {
                 .and().formLogin()
                 .failureHandler(authenticationFailureHandler())
                 .successHandler(authenticationSuccessHandler());
-//                .and()
-//                .formLogin()
-//                .usernameParameter("username")
-//                .loginPage("/login")
-//                .permitAll()
-//                .failureHandler(authenticationFailureHandler());
 
         return http.build();
     }
 
     public static void main(String[] args) {
         WebSecurityConfig webSecurityConfig = new WebSecurityConfig();
-        System.out.println(webSecurityConfig.passwordEncoder().encode("123456"));
     }
 }

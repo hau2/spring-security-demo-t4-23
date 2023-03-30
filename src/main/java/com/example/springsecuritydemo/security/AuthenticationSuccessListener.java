@@ -13,7 +13,7 @@ public class AuthenticationSuccessListener
         implements
         ApplicationListener<AuthenticationSuccessEvent> {
     @Autowired
-    LoginService loginAttemptService;
+    LoginService loginService;
 
     @Autowired
     HttpServletRequest request;
@@ -24,9 +24,9 @@ public class AuthenticationSuccessListener
         String username = request.getParameter("username");
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            loginAttemptService.loginSuccess(request.getRemoteAddr(),username);
+            loginService.loginSuccess(request.getRemoteAddr(),username);
         } else {
-            loginAttemptService.loginSuccess(xfHeader.split(",")[0], username);
+            loginService.loginSuccess(xfHeader.split(",")[0], username);
         }
     }
 }

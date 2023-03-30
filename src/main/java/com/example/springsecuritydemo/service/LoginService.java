@@ -32,7 +32,7 @@ public class LoginService {
                 build(new CacheLoader<String, Integer>() {
             @Override
             public Integer load(final String key) {
-                return 0;
+                return (Integer) 0;
             }
         });
         attemptsUserMap = new HashMap<>();
@@ -40,39 +40,38 @@ public class LoginService {
 
     /**
      * Login thành công reset lại toàn bộ count fail  */
-    public void loginSuccess(final String idAddress, String username) throws ExecutionException {
+    public void loginSuccess(final String idAddress,final String username) throws ExecutionException {
         int attemptsIPAddress = attemptsIPAddressCache.get(idAddress);
         if (attemptsIPAddress != 0 ) {
-            attemptsIPAddressCache.put(idAddress, 0);
+            attemptsIPAddressCache.put(idAddress, Integer.valueOf(0));
         }
 
         if (attemptsUserMap.containsKey(username)) {
             int attemptsUser = attemptsUserMap.get(username);
             if (attemptsUser != 0 ) {
-                attemptsUserMap.put(username, 0);
+                attemptsUserMap.put(username, Integer.valueOf(0));
             }
         }
 
     }
 
     public void loginFailedIPAddress(String idAddress) {
-        int attempts;
+        Integer attempts;
         try {
             attempts = attemptsIPAddressCache.get(idAddress);
         } catch (final ExecutionException e) {
-            attempts = 0;
+            attempts = Integer.valueOf(0);
         }
         attempts++;
         attemptsIPAddressCache.put(idAddress, attempts);
     }
 
     public void loginFailedUser(String username) {
-        System.out.println("loginFailedUser");
-        int attempts;
+        Integer attempts;
         try {
             attempts = attemptsUserMap.get(username);
         } catch (NullPointerException e) {
-            attempts= 0;
+            attempts= Integer.valueOf(0);
         }
         attempts++;
         attemptsUserMap.put(username, attempts);
@@ -99,7 +98,7 @@ public class LoginService {
         return request.getParameter("username");
     }
 
-    public boolean isUserBlocked(String username) {
+    public boolean isUserBlocked() {
         return attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
     }
 
