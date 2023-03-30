@@ -57,13 +57,13 @@ public class CustomAuthenticationFailureHandler
             return;
         }
 
-        if (loginService.isUserBlocked(username)) {
+        if (loginService.isUserBlocked()) {
             errorMessage = "blocked user";
             userService.updateIsEnableByUsername(false, username);
             response.sendRedirect("user_blocked");
             return;
         }
-        System.out.println("login ?");
+
         response.sendRedirect("/login");
 
 

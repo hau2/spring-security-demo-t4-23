@@ -67,7 +67,6 @@ public class LoginService {
     }
 
     public void loginFailedUser(String username) {
-        System.out.println("loginFailedUser");
         int attempts;
         try {
             attempts = attemptsUserMap.get(username);
@@ -99,7 +98,7 @@ public class LoginService {
         return request.getParameter("username");
     }
 
-    public boolean isUserBlocked(String username) {
+    public boolean isUserBlocked() {
         return attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
     }
 

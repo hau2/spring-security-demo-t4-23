@@ -81,6 +81,5 @@ public class WebSecurityConfig {
 
     public static void main(String[] args) {
         WebSecurityConfig webSecurityConfig = new WebSecurityConfig();
-        System.out.println(webSecurityConfig.passwordEncoder().encode("123456"));
     }
 }
