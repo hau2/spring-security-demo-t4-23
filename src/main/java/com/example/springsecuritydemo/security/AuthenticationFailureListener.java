@@ -26,8 +26,11 @@ public class AuthenticationFailureListener implements
             loginAttemptService.loginFailedIPAddress(xfHeader.split(",")[0]);
         }
 
-        if (event.getAuthentication().getAuthorities().isEmpty()) {
+        System.out.println(request.getParameter("username"));
+        System.out.println(event.getAuthentication());
+        if (!event.getAuthentication().getAuthorities().isEmpty()) {
             String username = request.getParameter("username");
+            System.out.println("username fail = "  + username);
             loginAttemptService.loginFailedUser(username);
         }
 

@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.security;
 
+import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.service.LoginService;
 import com.example.springsecuritydemo.service.UserService;
 import jakarta.servlet.ServletException;
@@ -58,11 +59,15 @@ public class CustomAuthenticationFailureHandler
             return;
         }
 
-        if (loginService.isUserBlocked()) {
-            errorMessage = "blocked user";
-            userService.updateIsEnableByUsername(false, username);
-            response.sendRedirect("user_blocked");
-            return;
+        try {
+            if (loginService.isUserBlocked(username)) {
+                errorMessage = "blocked user";
+                userService.updateIsEnableByUsername(false, username);
+                response.sendRedirect("user_blocked");
+                return;
+            }
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         response.sendRedirect("/login");

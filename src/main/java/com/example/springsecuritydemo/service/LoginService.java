@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.service;
 
+import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.repository.UserRepository;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -75,6 +76,7 @@ public class LoginService {
             attempts= 0;
         }
         attempts++;
+        System.out.println("loginFailedUser = " + username + " count = " + attempts);
         attemptsUserMap.put(username, attempts);
     }
 
@@ -99,8 +101,10 @@ public class LoginService {
         return request.getParameter("username");
     }
 
-    public boolean isUserBlocked() {
-        return attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
+    public boolean isUserBlocked(String username) throws UserNotFoundException {
+        Boolean result = false;
+        result = attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
+        return result;
     }
 
 

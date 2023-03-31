@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -54,40 +55,41 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new RuntimeException("blocked");
         }
 
-//        try {
-//            User user = userRepository.findByUsername(username);
-//
-//            if (user == null) {
-//                return new org.springframework.security.core.userdetails.User(
-//                        " ", " ", true, true, true, true,
-//                        getAuthorities(Collections.singletonList((ERole.ROLE_ANONYMOUS.toString()))));
-//            }
-//
-//            List<String> roles = userRoleRepository.findAllRoleByUserId(user.getId());
-//
-//            return new org.springframework.security.core.userdetails.User(
-//                    user.getUsername(),
-//                    user.getPassword(),
-//                    user.isEnable(),
-//                    true, true, true,
-//                    getAuthorities(roles));
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            Optional<User> user = userRepository.findByMail(username);
 
-        User user = userRepository.findByMail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
-
-        List<String> roles = userRoleRepository.findAllRoleByUserId(user.getId());
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (roles != null) {
-            for (String roleName : roles) {
-                GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
-                authorities.add(authority);
+            if (user.isEmpty()) {
+                return new org.springframework.security.core.userdetails.User(
+                        " ", " ", true, true, true, true,
+                        getAuthorities(Collections.singletonList((ERole.ROLE_ANONYMOUS.toString()))));
             }
+
+            List<String> roles = userRoleRepository.findAllRoleByUserId(user.get().getId());
+            System.out.println(getAuthorities(roles));
+            return new org.springframework.security.core.userdetails.User(
+                    user.get().getMail(),
+                    user.get().getPassword(),
+                    user.get().isEnable(),
+                    true, true, true,
+                    getAuthorities(roles));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-        return UserDetailsImpl.build(user, authorities);
+//        User user = userRepository.findByMail(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+//        System.out.println("loadUserByUsername = " + user.getMail());
+//        List<String> roles = userRoleRepository.findAllRoleByUserId(user.getId());
+//        System.out.println("roles = " + roles.get(0));
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        if (roles != null) {
+//            for (String roleName : roles) {
+//                GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+//                authorities.add(authority);
+//            }
+//        }
+//        System.out.println("authorities = " + authorities);
+//        return UserDetailsImpl.build(user, authorities);
     }
 
 }
