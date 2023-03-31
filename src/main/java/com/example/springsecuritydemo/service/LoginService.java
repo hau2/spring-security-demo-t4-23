@@ -57,7 +57,6 @@ public class LoginService {
     }
 
     public void loginFailedIPAddress(String idAddress) {
-        System.out.println("loginFailedIPAddress");
         int attempts;
         try {
             attempts = attemptsIPAddressCache.get(idAddress);
@@ -102,9 +101,7 @@ public class LoginService {
     }
 
     public boolean isUserBlocked(String username) throws UserNotFoundException {
-        Boolean result = false;
-        result = attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
-        return result;
+        return attemptsUserMap.get(getUsername()) >= MAX_ATTEMPT_LOGIN;
     }
 
 

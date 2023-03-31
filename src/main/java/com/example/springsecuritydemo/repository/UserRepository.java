@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             value = "UPDATE user SET is_enable = :isEnable WHERE mail = :mail",
             nativeQuery = true
     )
-    void updateIsEnableByUsername(
+    void updateIsEnableByMail(
             @Param("isEnable") Boolean isEnable,
             @Param("mail") String mail);
 
@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             value = "UPDATE user SET count_fail_login = :countFailLogin WHERE mail = :mail",
             nativeQuery = true
     )
-    void updateCountFailLoginByUsername(
+    void updateCountFailLoginByMail(
             @Param("countFailLogin") int countFailLogin,
             @Param("mail") String mail);
 
@@ -41,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             value = "SELECT count_fail_login FROM user  WHERE mail = :mail",
             nativeQuery = true
     )
-    Integer getCountFailLoginByUsername(@Param("mail") String mail);
+    Integer getCountFailLoginByMail(@Param("mail") String mail);
 
     @Query(value = "select * from user where private_code = ?;", nativeQuery = true)
     Optional<User> finByPrivateCode(String privateCode);

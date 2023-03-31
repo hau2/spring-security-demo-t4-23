@@ -1,7 +1,7 @@
 package com.example.springsecuritydemo.security;
 
-import com.example.springsecuritydemo.model.ERole;
 import com.example.springsecuritydemo.service.LoginService;
+import com.example.springsecuritydemo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -15,23 +15,25 @@ public class AuthenticationFailureListener implements
     private HttpServletRequest request;
 
     @Autowired
-    private LoginService loginAttemptService;
+    private LoginService loginService;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            loginAttemptService.loginFailedIPAddress(request.getRemoteAddr());
+            loginService.loginFailedIPAddress(request.getRemoteAddr());
         } else {
-            loginAttemptService.loginFailedIPAddress(xfHeader.split(",")[0]);
+            loginService.loginFailedIPAddress(xfHeader.split(",")[0]);
         }
 
-        System.out.println(request.getParameter("username"));
-        System.out.println(event.getAuthentication());
-        if (!event.getAuthentication().getAuthorities().isEmpty()) {
-            String username = request.getParameter("username");
-            System.out.println("username fail = "  + username);
-            loginAttemptService.loginFailedUser(username);
+        String mail = request.getParameter("username");
+
+        if (userService.findByMail(mail).isPresent()) {
+            System.out.println("mail fail = "  + mail);
+            loginService.loginFailedUser(mail);
         }
 
 

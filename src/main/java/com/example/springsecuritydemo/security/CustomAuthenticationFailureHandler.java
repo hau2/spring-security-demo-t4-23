@@ -3,6 +3,7 @@ package com.example.springsecuritydemo.security;
 import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.service.LoginService;
 import com.example.springsecuritydemo.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class CustomAuthenticationFailureHandler
             HttpServletResponse response,
             AuthenticationException exception)
             throws IOException, ServletException {
-        String username = request.getParameter("username");
+        String mail = request.getParameter("username");
 
 
         // not found username > 3 lan -> lock ip
@@ -60,13 +61,14 @@ public class CustomAuthenticationFailureHandler
         }
 
         try {
-            if (loginService.isUserBlocked(username)) {
+            if (loginService.isUserBlocked(mail)) {
                 errorMessage = "blocked user";
-                userService.updateIsEnableByUsername(false, username);
+                userService.updateIsEnableByMail(false, mail);
+                userService.sendMailResetPassword(mail);
                 response.sendRedirect("user_blocked");
                 return;
             }
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | MessagingException e) {
             throw new RuntimeException(e);
         }
 

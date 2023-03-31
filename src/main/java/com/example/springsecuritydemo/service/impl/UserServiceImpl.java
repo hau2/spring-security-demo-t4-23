@@ -15,32 +15,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Value("${demo.app.verifyCodeDurationMinutes}")
     private Integer verifyCodeDurationMinutes;
+
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     CustomMailSender mailSender;
+
     @Autowired
     PasswordEncoder encoder;
 
     @Override
-    public void updateIsEnableByUsername(Boolean isEnable, String username) {
-        userRepository.updateIsEnableByUsername(isEnable, username);
+    public Optional<User> findByMail(String mail) {
+        return userRepository.findByMail(mail);
     }
 
     @Override
-    public void updateCountFailLoginByUsername(int countFailLogin, String username) {
-        userRepository.updateCountFailLoginByUsername(countFailLogin, username);
-    }
-
-    @Override
-    public Integer getCountFailLoginByUsername(String username) {
-        return userRepository.getCountFailLoginByUsername(username);
+    public void updateIsEnableByMail(Boolean isEnable, String username) {
+        userRepository.updateIsEnableByMail(isEnable, username);
     }
 
     @Override
