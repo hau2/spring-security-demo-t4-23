@@ -63,11 +63,12 @@ public class WebSecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/user_blocked").permitAll()
                 .requestMatchers("/ip_blocked").permitAll()
+                .requestMatchers("/404").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-//                .usernameParameter("username")
-//                .loginPage("/login")
+                .usernameParameter("mail")
+                .loginPage("/login")
                 .failureHandler(authenticationFailureHandler())
                 .successHandler(authenticationSuccessHandler());
 //                .permitAll();

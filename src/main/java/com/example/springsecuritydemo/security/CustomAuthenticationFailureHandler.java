@@ -8,11 +8,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.web.servlet.LocaleResolver;
 
 import java.io.IOException;
 
@@ -21,19 +19,8 @@ public class CustomAuthenticationFailureHandler
         implements AuthenticationFailureHandler {
     @Autowired
     UserService userService;
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private LocaleResolver localeResolver;
-
-    @Autowired
-    private HttpServletRequest request;
-
     @Autowired
     private LoginService loginService;
-
 
     @Override
     public void onAuthenticationFailure(
@@ -41,7 +28,7 @@ public class CustomAuthenticationFailureHandler
             HttpServletResponse response,
             AuthenticationException exception)
             throws IOException, ServletException {
-        String mail = request.getParameter("username");
+        String mail = request.getParameter("mail");
 
 
         // not found username > 3 lan -> lock ip
@@ -60,20 +47,22 @@ public class CustomAuthenticationFailureHandler
             return;
         }
 
+
+
         try {
-            if (loginService.isUserBlocked(mail)) {
-                errorMessage = "blocked user";
-                userService.updateIsEnableByMail(false, mail);
-                userService.sendMailResetPassword(mail);
-                response.sendRedirect("user_blocked");
-                return;
+            if (userService.findByMail(mail).get().isEnable()) {
+                if (loginService.isUserBlocked()) {
+                    userService.updateIsEnableByMail(false, mail);
+                    userService.sendMailResetPassword(mail);
+                } else {
+                    response.sendRedirect("/login");
+                }
             }
+            response.sendRedirect("user_blocked");
+
         } catch (UserNotFoundException | MessagingException e) {
             throw new RuntimeException(e);
         }
-
-        response.sendRedirect("/login");
-
 
     }
 }

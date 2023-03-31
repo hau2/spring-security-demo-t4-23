@@ -21,7 +21,7 @@ public class AuthenticationSuccessListener
     @SneakyThrows
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        String username = request.getParameter("username");
+        String username = request.getParameter("mail");
         final String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
             loginAttemptService.loginSuccess(request.getRemoteAddr(),username);

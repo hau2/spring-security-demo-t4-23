@@ -3,6 +3,7 @@ package com.example.springsecuritydemo.controller;
 import com.example.springsecuritydemo.exception.PrivateCodeHasExpired;
 import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.payload.request.ForgotPasswordRequest;
+import com.example.springsecuritydemo.payload.request.ResendMailRequest;
 import com.example.springsecuritydemo.payload.request.ResetPasswordRequest;
 import com.example.springsecuritydemo.service.UserService;
 import jakarta.mail.MessagingException;
@@ -36,7 +37,7 @@ public class SecurityController {
 
     @GetMapping("/user_blocked")
     public String getUserBlockedPage(Model model) {
-        model.addAttribute("mail", "leconghau095@gmail.com");
+        model.addAttribute("forgotPass", new ForgotPasswordRequest("leconghau095@gmail.com"));
         return "userBlocked";
     }
 
@@ -48,7 +49,7 @@ public class SecurityController {
 
     @GetMapping("/request-reset-password")
     public ModelAndView requestResetPassword() {
-        return new ModelAndView("request-reset-password","forgotPass", new ForgotPasswordRequest());
+        return new ModelAndView("request-reset-password","forgotPass", new ForgotPasswordRequest("leconghau095@gmail.com"));
     }
 
     @PostMapping("/request-reset-password")

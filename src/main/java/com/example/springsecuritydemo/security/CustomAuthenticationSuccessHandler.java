@@ -1,6 +1,9 @@
 package com.example.springsecuritydemo.security;
 
+import com.example.springsecuritydemo.exception.UserNotFoundException;
+import com.example.springsecuritydemo.service.LoginService;
 import com.example.springsecuritydemo.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +18,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     UserService userService;
 
+    @Autowired
+    LoginService loginService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
@@ -22,6 +28,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        String mail = request.getParameter("mail");
+        if (!userService.findByMail(mail).get().isEnable()) {
+            response.sendRedirect("user_blocked");
+            return;
+        }
         response.sendRedirect("/");
 
     }

@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>User bị khóa rồi</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>User block</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-Vào mail lấy mã đi !!! mail
+<div class="container" th:object="${forgotPass}">
+    <h2 class="form-signin-heading">Tài khoản đã bị khóa vì đăng nhập sai quá nhiều lần. Vui lòng kiểm tra email
+        <span th:text="*{mail}"/>
+        để đổi mật khẩu mới</h2>
+    <form class="form-signin" method="POST" th:action="@{/request-reset-password}">
+        <input type="hidden" th:field="*{mail}">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Gữi lại email</button>
+    </form>
+</div>
 </body>
 </html>
