@@ -67,7 +67,11 @@ public class LoginService {
     }
 
     public void loginFailedUser(String username) {
+<<<<<<< HEAD
         Integer attempts;
+=======
+        int attempts;
+>>>>>>> dfb4f711f7c0e48398ed29ec40bb3209177166a2
         try {
             attempts = attemptsUserMap.get(username);
         } catch (NullPointerException e) {
