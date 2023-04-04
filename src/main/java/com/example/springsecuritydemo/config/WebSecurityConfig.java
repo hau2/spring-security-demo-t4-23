@@ -70,8 +70,12 @@ public class WebSecurityConfig {
                 .usernameParameter("mail")
                 .loginPage("/login")
                 .failureHandler(authenticationFailureHandler())
-                .successHandler(authenticationSuccessHandler());
-//                .permitAll();
+                .successHandler(authenticationSuccessHandler()).and()
+                .logout()
+                .deleteCookies("JSESSIONID")
+                .and()
+                .rememberMe()
+                .key("uniqueAndSecret");
         return http.build();
     }
 }

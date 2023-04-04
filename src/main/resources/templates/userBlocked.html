@@ -16,6 +16,7 @@
     <form class="form-signin" method="POST" th:action="@{/request-reset-password}">
         <input type="hidden" th:field="*{mail}">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Gữi lại email</button>
+        <a class="text-primary" type="submit" th:href="@{'/login'}">Quay về trang đăng nhập</a>
     </form>
 </div>
 </body>

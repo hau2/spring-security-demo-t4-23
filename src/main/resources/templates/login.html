@@ -11,15 +11,15 @@
 <body>
 <div class="container">
     <h2 class="form-signin-heading">Login Page</h2>
-    <div th:if="${param.error}" class="alert alert-danger">
-        Invalid username and password.
+    <div th:if="${error_msg}" class="alert alert-danger">
+        <span th:text="${error_msg}"></span>
     </div>
     <div th:if="${param.logout}" class="alert alert-success">
         You have been logged out.
     </div>
     <form class="form-signin" method="POST" th:action="@{/login}">
         <p>
-            <label for="mail" class="sr-only">Mail</label>
+            <label for="mail" class="sr-only">Email</label>
             <input type="text" id="mail" name="mail" class="form-control"
                    placeholder="Username" required autofocus>
         </p>
@@ -27,6 +27,12 @@
             <label for="password" class="sr-only">Password</label>
             <input type="password" id="password" name="password" class="form-control"
                    placeholder="Password" required>
+        </p>
+        <p>
+            <input type="checkbox" name="remember-me" id="remember-me"/> <label for="remember-me" class="sr-only">Remember me</label>
+        </p>
+        <p>
+            <span th:if="${spam_msg}" th:text="${spam_msg}" class="text-danger"/>
         </p>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
     </form>

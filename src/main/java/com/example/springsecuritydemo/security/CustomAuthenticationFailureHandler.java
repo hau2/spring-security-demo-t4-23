@@ -1,19 +1,18 @@
 package com.example.springsecuritydemo.security;
 
-import com.example.springsecuritydemo.exception.UserNotFoundException;
+import com.example.springsecuritydemo.entity.User;
 import com.example.springsecuritydemo.service.LoginService;
 import com.example.springsecuritydemo.service.UserService;
-import jakarta.mail.MessagingException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
+@Service
 public class CustomAuthenticationFailureHandler
         extends SimpleUrlAuthenticationFailureHandler
         implements AuthenticationFailureHandler {
@@ -22,14 +21,13 @@ public class CustomAuthenticationFailureHandler
     @Autowired
     private LoginService loginService;
 
+    @SneakyThrows
     @Override
     public void onAuthenticationFailure(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException exception)
-            throws IOException, ServletException {
+            AuthenticationException exception) {
         String mail = request.getParameter("mail");
-
 
         // not found username > 3 lan -> lock ip
         String errorMessage = "badCredentials";
@@ -43,26 +41,25 @@ public class CustomAuthenticationFailureHandler
 
         if (errorMessage.contains("blocked ip address")) {
             System.out.println("blocked ip roiiiiiii");
-            response.sendRedirect("ip_blocked");
+            response.sendRedirect("/login?spam=true");
             return;
         }
 
-
-
-        try {
-            if (userService.findByMail(mail).get().isEnable()) {
-                if (loginService.isUserBlocked()) {
-                    userService.updateIsEnableByMail(false, mail);
-                    userService.sendMailResetPassword(mail);
-                } else {
-                    response.sendRedirect("/login");
-                }
-            }
-            response.sendRedirect("user_blocked");
-
-        } catch (UserNotFoundException | MessagingException e) {
-            throw new RuntimeException(e);
+        User user = userService.findByMail(mail).orElse(null);
+        if (user == null) {
+            response.sendRedirect("/login?error=true");
+            return;
         }
 
+        if (user.isEnable()) {
+            if (!loginService.isUserBlockedInCache()) {
+                response.sendRedirect("/login?error=true");
+                return;
+            }
+            userService.updateIsEnableByMail(false, mail);
+            userService.sendMailResetPassword(mail);
+        }
+
+        response.sendRedirect("/user_blocked?mail=" + mail);
     }
 }

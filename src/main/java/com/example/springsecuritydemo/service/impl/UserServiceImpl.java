@@ -7,6 +7,7 @@ import com.example.springsecuritydemo.payload.request.ResetPasswordRequest;
 import com.example.springsecuritydemo.query.PrivateCodeResult;
 import com.example.springsecuritydemo.repository.UserRepository;
 import com.example.springsecuritydemo.service.UserService;
+import com.example.springsecuritydemo.template.RequestResetPasswordTemplate;
 import com.example.springsecuritydemo.utils.CustomMailSender;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.example.springsecuritydemo.constants.Constants.RESET_PW;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,8 +37,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByMail(String mail) {
-        System.out.println("findByMail impl ");
-        System.out.println(userRepository.findByMail(mail).get().getMail());
         return userRepository.findByMail(mail);
     }
 
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
         String finalPrivateCode = privateCode;
         Thread t = new Thread(() -> {
             try {
-                sendCodeToUser(mail, finalPrivateCode);
+                sendCodeResetToUser(mail, finalPrivateCode);
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
         // Unlock this user if blocked
         User user = finByPrivateCode(request.getPrivateCode());
-        if(!user.isEnable()) {
+        if (!user.isEnable()) {
             userRepository.unlockUser(request.getPrivateCode());
         }
 
@@ -95,8 +96,8 @@ public class UserServiceImpl implements UserService {
         userRepository.killPrivateCode(request.getPrivateCode());
     }
 
-    private void sendCodeToUser(String mail, String code) throws MessagingException {
-        mailSender.send(mail, "RESET_PASSWORD", "localhost:8080/reset?code=" + code);
+    private void sendCodeResetToUser(String mail, String code) throws MessagingException {
+        mailSender.send(mail, RESET_PW, RequestResetPasswordTemplate.build(mail, "localhost:8080/reset?code=" + code));
     }
 
     private Boolean isExpiredPrivateCode(String privateCode) {

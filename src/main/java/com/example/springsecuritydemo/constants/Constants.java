@@ -5,4 +5,5 @@ public interface Constants {
     String MY_PASSWORD = "kndwyqajcldtjocj";
     int MAX_ATTEMPT_IP_ADDRESS = 4;
     int MAX_ATTEMPT_LOGIN = 2;
+    String RESET_PW = "RESET_PASSWORD";
 }
