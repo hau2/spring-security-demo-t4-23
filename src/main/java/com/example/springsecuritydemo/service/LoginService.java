@@ -1,5 +1,6 @@
 package com.example.springsecuritydemo.service;
 
+import com.example.springsecuritydemo.entity.User;
 import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.repository.UserRepository;
 import com.google.common.cache.CacheBuilder;
@@ -31,7 +32,7 @@ public class LoginService {
     public LoginService() {
         super();
         attemptsIPAddressCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).
-                build(new CacheLoader<String, Integer>() {
+                build(new CacheLoader<>() {
                     @Override
                     public Integer load(final String key) {
                         return 0;
@@ -105,7 +106,7 @@ public class LoginService {
         return request.getParameter("mail");
     }
 
-    public boolean isUserBlocked() throws UserNotFoundException {
+    public boolean isUserBlockedInCache() {
         System.out.println("is user blocked ");
         System.out.println(attemptsUserMap.get(getMail()) == null);
         System.out.println(attemptsUserMap.get(getMail()));

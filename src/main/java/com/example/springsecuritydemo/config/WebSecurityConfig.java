@@ -72,10 +72,12 @@ public class WebSecurityConfig {
                 .usernameParameter("mail")
                 .loginPage("/login")
                 .failureHandler(authenticationFailureHandler())
-                .successHandler(authenticationSuccessHandler())
+                .successHandler(authenticationSuccessHandler()).and()
+                .logout()
+                .deleteCookies("JSESSIONID")
                 .and()
-                .rememberMe().tokenValiditySeconds(2*60).key("uniqueAndSecret");
-
+                .rememberMe()
+                .key("uniqueAndSecret");
         return http.build();
     }
 }

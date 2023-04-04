@@ -12,6 +12,7 @@ import com.example.springsecuritydemo.repository.RoleRepository;
 import com.example.springsecuritydemo.repository.UserRepository;
 import com.example.springsecuritydemo.service.IUserRoleService;
 import com.example.springsecuritydemo.service.IUserService;
+import com.example.springsecuritydemo.template.RequestResetPasswordTemplate;
 import com.example.springsecuritydemo.utils.CustomMailSender;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.example.springsecuritydemo.constants.Constants.RESET_PW;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -69,7 +72,7 @@ public class UserServiceImpl implements IUserService {
         String finalPrivateCode = privateCode;
         Thread t = new Thread(() -> {
             try {
-                sendCodeToUser(mail, finalPrivateCode);
+                sendCodeResetToUser(mail, finalPrivateCode);
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
@@ -96,12 +99,16 @@ public class UserServiceImpl implements IUserService {
 
         // Unlock this user if blocked
         User user = finByPrivateCode(request.getPrivateCode());
-        if(!user.isEnable()) {
+        if (!user.isEnable()) {
             userRepository.unlockUser(request.getPrivateCode());
         }
 
         // Delete private code
         userRepository.killPrivateCode(request.getPrivateCode());
+    }
+
+    private void sendCodeResetToUser(String mail, String code) throws MessagingException {
+        mailSender.send(mail, RESET_PW, RequestResetPasswordTemplate.build(mail, "localhost:8080/reset?code=" + code));
     }
 
     private boolean emailExists(String mail) {
@@ -125,6 +132,7 @@ public class UserServiceImpl implements IUserService {
 
     private Boolean isExpiredPrivateCode(String privateCode) {
         LocalDateTime expiryDate = userRepository.findExpiryDateOfPrivateCode(privateCode);
+        if(expiryDate == null) return false;
         return expiryDate.isBefore(LocalDateTime.now());
     }
 }

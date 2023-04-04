@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
-    @Query(value = "select role.role_name from user_role inner join role where user_role.role_id = role.role_id", nativeQuery = true)
+    @Query(value = "select role.role_name from user_role inner join role inner join user where user_role.role_id = role.role_id and user_role.user_id = user.user_id and user.user_id = ?", nativeQuery = true)
     List<String> findAllRoleByUserId(Integer userId);
 }

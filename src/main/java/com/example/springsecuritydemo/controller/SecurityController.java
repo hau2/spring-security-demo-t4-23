@@ -6,8 +6,8 @@ import com.example.springsecuritydemo.exception.UserAlreadyExistException;
 import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.payload.request.ForgotPasswordRequest;
 import com.example.springsecuritydemo.payload.request.ResetPasswordRequest;
-import com.example.springsecuritydemo.service.LoginService;
 import com.example.springsecuritydemo.service.IUserService;
+import com.example.springsecuritydemo.service.LoginService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("")
@@ -43,47 +43,42 @@ public class SecurityController {
         return "index";
     }
     @GetMapping("/login")
-    public String authenticateUser() {
+    public ModelAndView authenticateUser(@RequestParam(required = false) Optional<Boolean> error,
+                                         @RequestParam(required = false) Optional<Boolean> spam) {
+        Boolean isError = error.orElse(false);
+        Boolean isSpam = spam.orElse(false);
+
+        if(isSpam) {
+            return new ModelAndView("login", "spam_msg", "You have tried logging in too many times. Try again in a few minutes.");
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return "login";
+            if(isError) {
+                return new ModelAndView("login", "error_msg", "Invalid username and password.");
+            }
         }
-        return "redirect:/";
+        return new ModelAndView("login");
     }
 
     @GetMapping("/user_blocked")
-    public String getUserBlockedPage(Model model) {
-        model.addAttribute("forgotPass", new ForgotPasswordRequest("leconghau095@gmail.com"));
-        return "userBlocked";
-    }
-
-    @GetMapping("/ip_blocked")
-    public String getIPBlockedPage(Model model) throws IOException {
-        String ipAddress;
-        final String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || !xfHeader.contains(request.getRemoteAddr())) {
-            ipAddress = request.getRemoteAddr();
-        } else {
-            ipAddress = xfHeader.split(",")[0];
+    public ModelAndView getUserBlockedPage(@RequestParam(required = false) Optional<String> mail) {
+        String email = mail.orElse(null);
+        if(email == null) {
+            new ModelAndView("login");
         }
-
-        if (!loginService.isIPAddressBlocked()) {
-            response.sendRedirect("/login");
-            return "login";
-        }
-        model.addAttribute("username", "Username");
-        return "ipBlocked";
+        return new ModelAndView("userBlocked", "forgotPass", new ForgotPasswordRequest(mail.get()));
     }
 
     @GetMapping("/request-reset-password")
     public ModelAndView requestResetPassword() {
-        return new ModelAndView("request-reset-password","forgotPass", new ForgotPasswordRequest("leconghau095@gmail.com"));
+        return new ModelAndView("request-reset-password", "forgotPass", new ForgotPasswordRequest(""));
     }
 
     @PostMapping("/request-reset-password")
-    public String resetPassword(@ModelAttribute("forgotPass") ForgotPasswordRequest request) throws MessagingException {
+    public ModelAndView resetPassword(@ModelAttribute("forgotPass") ForgotPasswordRequest request) throws MessagingException {
         userService.sendMailResetPassword(request.getMail());
-        return "index";
+        return new ModelAndView("request-reset-password", "forgotPass", new ForgotPasswordRequest(request.getMail()));
     }
 
     @GetMapping("/reset")
