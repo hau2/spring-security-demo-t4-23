@@ -2,7 +2,7 @@ package com.example.springsecuritydemo.security;
 
 import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.service.LoginService;
-import com.example.springsecuritydemo.service.UserService;
+import com.example.springsecuritydemo.service.IUserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,8 @@ public class CustomAuthenticationFailureHandler
         extends SimpleUrlAuthenticationFailureHandler
         implements AuthenticationFailureHandler {
     @Autowired
-    UserService userService;
+    IUserService userService;
+
     @Autowired
     private LoginService loginService;
 

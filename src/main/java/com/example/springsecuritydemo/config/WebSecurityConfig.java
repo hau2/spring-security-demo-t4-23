@@ -63,6 +63,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/user_blocked").permitAll()
                 .requestMatchers("/ip_blocked").permitAll()
+                .requestMatchers("/register").permitAll()
+                .requestMatchers("/process_register").permitAll()
                 .requestMatchers("/404").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -70,8 +72,10 @@ public class WebSecurityConfig {
                 .usernameParameter("mail")
                 .loginPage("/login")
                 .failureHandler(authenticationFailureHandler())
-                .successHandler(authenticationSuccessHandler());
-//                .permitAll();
+                .successHandler(authenticationSuccessHandler())
+                .and()
+                .rememberMe().tokenValiditySeconds(2*60).key("uniqueAndSecret");
+
         return http.build();
     }
 }

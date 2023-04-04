@@ -1,12 +1,17 @@
 package com.example.springsecuritydemo.service.impl;
 
+import com.example.springsecuritydemo.entity.Role;
 import com.example.springsecuritydemo.entity.User;
 import com.example.springsecuritydemo.exception.PrivateCodeHasExpired;
+import com.example.springsecuritydemo.exception.UserAlreadyExistException;
 import com.example.springsecuritydemo.exception.UserNotFoundException;
+import com.example.springsecuritydemo.model.ERole;
 import com.example.springsecuritydemo.payload.request.ResetPasswordRequest;
 import com.example.springsecuritydemo.query.PrivateCodeResult;
+import com.example.springsecuritydemo.repository.RoleRepository;
 import com.example.springsecuritydemo.repository.UserRepository;
-import com.example.springsecuritydemo.service.UserService;
+import com.example.springsecuritydemo.service.IUserRoleService;
+import com.example.springsecuritydemo.service.IUserService;
 import com.example.springsecuritydemo.utils.CustomMailSender;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
     @Value("${demo.app.verifyCodeDurationMinutes}")
     private Integer verifyCodeDurationMinutes;
 
@@ -32,10 +37,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    IUserRoleService userRoleService;
+
+    @Autowired
+    RoleRepository roleRepository;
+
     @Override
     public Optional<User> findByMail(String mail) {
-        System.out.println("findByMail impl ");
-        System.out.println(userRepository.findByMail(mail).get().getMail());
         return userRepository.findByMail(mail);
     }
 
@@ -93,6 +102,21 @@ public class UserServiceImpl implements UserService {
 
         // Delete private code
         userRepository.killPrivateCode(request.getPrivateCode());
+    }
+
+    private boolean emailExists(String mail) {
+        return userRepository.findByMail(mail).isPresent();
+    }
+
+    @Override
+    public User register(User user) throws UserAlreadyExistException {
+        if (emailExists(user.getMail())) {
+            throw new UserAlreadyExistException(user.getMail());
+        }
+        User resultUser = userRepository.save(user);
+        Optional<Role> role = roleRepository.findByRoleName(String.valueOf(ERole.ROLE_ADMIN_GROUP));
+        userRoleService.save(resultUser, role.get());
+        return resultUser;
     }
 
     private void sendCodeToUser(String mail, String code) throws MessagingException {

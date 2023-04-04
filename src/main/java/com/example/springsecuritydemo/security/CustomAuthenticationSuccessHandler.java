@@ -1,9 +1,7 @@
 package com.example.springsecuritydemo.security;
 
-import com.example.springsecuritydemo.exception.UserNotFoundException;
 import com.example.springsecuritydemo.service.LoginService;
-import com.example.springsecuritydemo.service.UserService;
-import jakarta.mail.MessagingException;
+import com.example.springsecuritydemo.service.IUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +14,7 @@ import java.io.IOException;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
-    UserService userService;
+    IUserService userService;
 
     @Autowired
     LoginService loginService;

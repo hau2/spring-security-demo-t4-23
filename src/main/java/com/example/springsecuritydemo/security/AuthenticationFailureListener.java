@@ -1,12 +1,11 @@
 package com.example.springsecuritydemo.security;
 
 import com.example.springsecuritydemo.service.LoginService;
-import com.example.springsecuritydemo.service.UserService;
+import com.example.springsecuritydemo.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
-import org.springframework.security.authentication.event.AuthenticationFailureDisabledEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,7 +18,7 @@ public class AuthenticationFailureListener implements
     private LoginService loginService;
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {

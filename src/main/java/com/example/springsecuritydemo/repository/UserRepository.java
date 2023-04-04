@@ -76,4 +76,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query(value = "update user set private_code = null, expiry_date_code = null where private_code = ?", nativeQuery = true)
     void killPrivateCode(String privateCode);
+
 }

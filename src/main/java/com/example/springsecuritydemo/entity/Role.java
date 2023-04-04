@@ -19,5 +19,7 @@ public class Role {
     private Integer id;
 
     @Column(name = "role_name", columnDefinition = "VARCHAR(50)")
-    private ERole roleName;
+    private String roleName;
+
+
 }
